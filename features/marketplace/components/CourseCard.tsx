@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { CourseThumbnail } from '@/features/marketplace/components/CourseThumbnail';
 import type { MarketplaceCourse } from '@/features/marketplace/server/data';
 import { DIFFICULTY_LABELS, type MarketplaceDifficulty } from '@/features/marketplace/schemas';
-
 import { formatMoney } from '@/shared/utils/money';
 
 export function CourseCard({
