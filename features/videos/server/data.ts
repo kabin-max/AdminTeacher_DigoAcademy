@@ -13,6 +13,7 @@ export interface VideoOverview {
   videoUrl: string | null;
   createdAt: string;
   instructorName?: string;
+  type: 'LESSON' | 'BATCH';
 }
 
 async function sign(key: string | null): Promise<string | null> {
@@ -54,6 +55,7 @@ export async function getInstructorVideos(instructorId: string): Promise<VideoOv
       durationMin: l.videoDurationSec ? Math.round(l.videoDurationSec / 60) : null,
       videoUrl: await sign(l.videoKey),
       createdAt: new Date().toISOString(),
+      type: 'LESSON' as const,
     }))
   );
 
@@ -65,6 +67,7 @@ export async function getInstructorVideos(instructorId: string): Promise<VideoOv
       batchName: v.batch.name,
       videoUrl: await sign(v.videoKey),
       createdAt: v.createdAt.toISOString(),
+      type: 'BATCH' as const,
     }))
   );
 
@@ -115,6 +118,7 @@ export async function getStudentVideos(studentId: string): Promise<VideoOverview
       durationMin: l.videoDurationSec ? Math.round(l.videoDurationSec / 60) : null,
       videoUrl: await sign(l.videoKey),
       createdAt: new Date().toISOString(),
+      type: 'LESSON' as const,
     }))
   );
 
@@ -126,6 +130,7 @@ export async function getStudentVideos(studentId: string): Promise<VideoOverview
       batchName: v.batch.name,
       videoUrl: await sign(v.videoKey),
       createdAt: v.createdAt.toISOString(),
+      type: 'BATCH' as const,
     }))
   );
 
@@ -164,6 +169,7 @@ export async function getAdminVideos(): Promise<VideoOverview[]> {
       durationMin: l.videoDurationSec ? Math.round(l.videoDurationSec / 60) : null,
       videoUrl: await sign(l.videoKey),
       createdAt: new Date().toISOString(),
+      type: 'LESSON' as const,
     }))
   );
 
@@ -175,6 +181,7 @@ export async function getAdminVideos(): Promise<VideoOverview[]> {
       batchName: v.batch.name,
       videoUrl: await sign(v.videoKey),
       createdAt: v.createdAt.toISOString(),
+      type: 'BATCH' as const,
     }))
   );
 

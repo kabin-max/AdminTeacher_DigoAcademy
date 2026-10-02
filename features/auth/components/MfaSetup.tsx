@@ -46,9 +46,13 @@ export function MfaSetup({ enabled, required }: { enabled: boolean; required?: b
       toast.error(error?.message ?? 'Could not start 2FA setup');
       return;
     }
-    setTotpUri(data.totpURI);
-    setBackupCodes(data.backupCodes);
-    setStep('confirm');
+    if (data.method === 'totp') {
+      setTotpUri(data.totpURI);
+      setBackupCodes(data.backupCodes);
+      setStep('confirm');
+    } else {
+      toast.error('Unexpected 2FA method');
+    }
   }
 
   async function confirmEnable() {

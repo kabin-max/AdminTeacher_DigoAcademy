@@ -5,13 +5,13 @@ import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { deleteVideo, renameVideo } from '@/features/videos/server/actions';
-import type { AdminVideoListRow } from '@/features/videos/server/data';
+import type { VideoOverview } from '@/features/videos/server/data';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Badge } from '@/shared/components/ui/badge';
 import { useConfirm } from '@/shared/hooks/use-confirm';
 
-export function AdminVideoList({ videos }: { videos: AdminVideoListRow[] }) {
+export function AdminVideoList({ videos }: { videos: VideoOverview[] }) {
   if (videos.length === 0) {
     return (
       <div className="rounded-2xl border border-border/70 bg-card p-8 text-center text-sm text-muted-foreground shadow-sm">
@@ -29,7 +29,7 @@ export function AdminVideoList({ videos }: { videos: AdminVideoListRow[] }) {
   );
 }
 
-function VideoListItem({ video }: { video: AdminVideoListRow }) {
+function VideoListItem({ video }: { video: VideoOverview }) {
   const confirm = useConfirm();
   const [isDeleting, startDelete] = useTransition();
   const [isEditing, setIsEditing] = useState(false);
