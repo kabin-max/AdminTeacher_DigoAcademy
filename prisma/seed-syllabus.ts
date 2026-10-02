@@ -153,7 +153,7 @@ async function main() {
         data: {
           sectionId: section.id,
           title: lessonData.title,
-          type: lessonData.type,
+          type: lessonData.type as 'VIDEO' | 'ASSIGNMENT' | 'QUIZ' | 'NOTE',
           order: i + 1,
           videoDurationSec: lessonData.duration,
         },

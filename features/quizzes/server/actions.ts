@@ -137,3 +137,70 @@ export async function createStandaloneQuiz(
   revalidatePath(`/instructor/courses/${data.courseId}`);
   return { ok: true, quizId: result.id };
 }
+
+export async function deleteQuiz(quizId: string): Promise<ActionResult> {
+  const session = await authorize(ROLES.INSTRUCTOR, ROLES.ADMIN);
+  if (!session) return { ok: false, error: 'Not authorized.' };
+
+  const isAdmin = session.user.role === ROLES.ADMIN;
+
+  const quiz = await db.quiz.findUnique({
+    where: { id: quizId },
+    include: { lesson: { include: { section: { include: { course: { select: { instructorId: true } } } } } } },
+  });
+
+  if (!quiz) return { ok: false, error: 'Quiz not found.' };
+  if (!isAdmin && quiz.lesson.section.course.instructorId !== session.user.id) {
+    return { ok: false, error: 'Not authorized to delete this quiz.' };
+  }
+
+  // Deleting the lesson should cascade and delete the quiz and questions
+  await db.lesson.delete({ where: { id: quiz.lessonId } });
+  
+  await recordAudit({
+    actorId: session.user.id,
+    action: 'quiz.deleted',
+    entityType: 'Quiz',
+    entityId: quizId,
+    metadata: { title: quiz.title },
+  });
+
+  revalidatePath('/instructor/quizzes');
+  revalidatePath('/admin/quizzes');
+  return { ok: true };
+}
+
+export async function renameQuiz(quizId: string, newTitle: string): Promise<ActionResult> {
+  const session = await authorize(ROLES.INSTRUCTOR, ROLES.ADMIN);
+  if (!session) return { ok: false, error: 'Not authorized.' };
+  if (!newTitle.trim()) return { ok: false, error: 'Title is required.' };
+
+  const isAdmin = session.user.role === ROLES.ADMIN;
+
+  const quiz = await db.quiz.findUnique({
+    where: { id: quizId },
+    include: { lesson: { include: { section: { include: { course: { select: { instructorId: true } } } } } } },
+  });
+
+  if (!quiz) return { ok: false, error: 'Quiz not found.' };
+  if (!isAdmin && quiz.lesson.section.course.instructorId !== session.user.id) {
+    return { ok: false, error: 'Not authorized to edit this quiz.' };
+  }
+
+  await db.$transaction(async (tx) => {
+    await tx.quiz.update({ where: { id: quizId }, data: { title: newTitle.trim() } });
+    await tx.lesson.update({ where: { id: quiz.lessonId }, data: { title: newTitle.trim() } });
+  });
+
+  await recordAudit({
+    actorId: session.user.id,
+    action: 'quiz.renamed',
+    entityType: 'Quiz',
+    entityId: quizId,
+    metadata: { oldTitle: quiz.title, newTitle: newTitle.trim() },
+  });
+
+  revalidatePath('/instructor/quizzes');
+  revalidatePath('/admin/quizzes');
+  return { ok: true };
+}

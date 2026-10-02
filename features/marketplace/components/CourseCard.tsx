@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { CourseThumbnail } from '@/features/marketplace/components/CourseThumbnail';
 import type { MarketplaceCourse } from '@/features/marketplace/server/data';
 import { DIFFICULTY_LABELS, type MarketplaceDifficulty } from '@/features/marketplace/schemas';
-import { WishlistButton } from '@/features/wishlist/components/WishlistButton';
+
 import { formatMoney } from '@/shared/utils/money';
 
 export function CourseCard({
@@ -25,11 +25,7 @@ export function CourseCard({
 
   return (
     <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-card shadow-sm ring-1 ring-border/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-brand-blue/30">
-      {showWishlist && (
-        <div className="absolute right-3 top-3 z-20">
-          <WishlistButton courseId={course.id} initialWishlisted={wishlisted} />
-        </div>
-      )}
+
       <div className="relative aspect-video overflow-hidden bg-muted">
         <div className="size-full transition-transform duration-500 group-hover:scale-105">
           <CourseThumbnail title={course.title} url={course.thumbnailUrl} />
