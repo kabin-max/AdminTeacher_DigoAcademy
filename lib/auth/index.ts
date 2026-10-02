@@ -21,7 +21,7 @@ import { lockoutAfterHook, lockoutBeforeHook } from '@/lib/auth/lockout';
  */
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
-  trustedOrigins: ['http://localhost:3001', 'https://portal.digoacademy.com'],
+  trustedOrigins: ['http://localhost:3001', 'https://portal.digoacademy.com', 'https://main.d11t2mwdjhbzy4.amplifyapp.com'],
   secret: env.BETTER_AUTH_SECRET,
   database: prismaAdapter(db, { provider: 'postgresql' }),
 
