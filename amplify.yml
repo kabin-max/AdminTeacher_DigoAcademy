@@ -1,0 +1,24 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - npx prisma generate
+        # AWS Amplify requires this line to pass your console environment variables to the live Next.js server!
+        - printenv | grep -e DATABASE_URL -e DIRECT_URL -e BETTER_AUTH_SECRET -e BETTER_AUTH_URL -e S3_ -e NEXT_PUBLIC_ -e SES_ -e EMAIL_ -e ENFORCE_MFA -e GOOGLE_MEET_ > .env.production
+        - npm run build
+        # Remove the Next.js cache to drastically reduce the artifact size deployed to AWS Amplify
+        - rm -rf .next/cache
+        # Remove source maps to save ~150MB of space, keeping the artifact well below the 220MB limit
+        - find .next -name "*.map" -type f -delete
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*
