@@ -50,6 +50,7 @@ export function CourseDetailsForm({
   courseId,
   defaultValues,
   builderBasePath = '/instructor/courses',
+  instructors,
 }: {
   categories: CategoryChoices;
   mode: 'create' | 'edit';
@@ -57,9 +58,11 @@ export function CourseDetailsForm({
   defaultValues?: Partial<CourseDetailsInput>;
   /** Where to go after creating — the role's course builder base. */
   builderBasePath?: string;
+  instructors?: { id: string; name: string; email: string }[];
 }) {
   const router = useRouter();
   const [thumbnailKey, setThumbnailKey] = useState(defaultValues?.thumbnailKey ?? '');
+  const [introVideoKey, setIntroVideoKey] = useState(defaultValues?.introVideoKey ?? '');
   const {
     register,
     handleSubmit,
@@ -76,7 +79,11 @@ export function CourseDetailsForm({
       difficulty: 'BEGINNER',
       language: 'en',
       price: 0,
+      originalPrice: undefined,
+      isPromo: false,
       thumbnailKey: '',
+      introVideoKey: '',
+      instructorId: '',
       ...defaultValues,
     },
   });
@@ -168,7 +175,7 @@ export function CourseDetailsForm({
             <FieldError errors={[errors.language]} />
           </Field>
           <Field>
-            <FieldLabel htmlFor="price">Price</FieldLabel>
+            <FieldLabel htmlFor="price">Price (NPR)</FieldLabel>
             <Input
               id="price"
               type="number"
@@ -178,7 +185,36 @@ export function CourseDetailsForm({
             />
             <FieldError errors={[errors.price]} />
           </Field>
+          <Field>
+            <FieldLabel htmlFor="originalPrice">Original Price / Cross-out (NPR)</FieldLabel>
+            <Input
+              id="originalPrice"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="E.g. 33000"
+              {...register('originalPrice', { valueAsNumber: true })}
+            />
+            <FieldDescription>Optional. Shown strikethrough if on offer.</FieldDescription>
+            <FieldError errors={[errors.originalPrice]} />
+          </Field>
         </div>
+        <Field className="flex items-center gap-3 rounded-lg border border-border p-3.5 bg-accent/20">
+          <input
+            id="isPromo"
+            type="checkbox"
+            className="size-4 rounded border-input text-primary focus:ring-primary"
+            {...register('isPromo')}
+          />
+          <div>
+            <FieldLabel htmlFor="isPromo" className="font-semibold cursor-pointer">
+              🔥 Highlight as Special Offer / Promo Course
+            </FieldLabel>
+            <FieldDescription className="text-xs">
+              Featuring this course will make it appear in the Special Offer banner on the student portal home page.
+            </FieldDescription>
+          </div>
+        </Field>
         <Field>
           <FieldLabel>Thumbnail</FieldLabel>
           {courseId ? (
@@ -200,6 +236,40 @@ export function CourseDetailsForm({
           )}
           <input type="hidden" {...register('thumbnailKey')} />
         </Field>
+        <Field>
+          <FieldLabel>Intro Video</FieldLabel>
+          {courseId ? (
+            <>
+              <FileUpload
+                courseId={courseId}
+                kind="video"
+                accept="video/mp4,video/webm"
+                value={introVideoKey || undefined}
+                onUploaded={(key) => {
+                  setIntroVideoKey(key);
+                  setValue('introVideoKey', key, { shouldDirty: true });
+                }}
+              />
+              <FieldDescription>MP4 or WebM format. This acts as the course preview/intro video.</FieldDescription>
+            </>
+          ) : (
+            <FieldDescription>Create the course first, then upload an intro video here.</FieldDescription>
+          )}
+          <input type="hidden" {...register('introVideoKey')} />
+        </Field>
+        {instructors && instructors.length > 0 && (
+          <Field>
+            <FieldLabel htmlFor="instructorId">Instructor (Admin Only)</FieldLabel>
+            <select id="instructorId" className={cn(selectClass)} {...register('instructorId')}>
+              <option value="">Select Instructor...</option>
+              {instructors.map((ins) => (
+                <option key={ins.id} value={ins.id}>
+                  {ins.name} ({ins.email})
+                </option>
+              ))}
+            </select>
+          </Field>
+        )}
         <Button type="submit" disabled={isSubmitting} className="w-fit">
           {isSubmitting ? 'Saving…' : mode === 'create' ? 'Create course' : 'Save details'}
         </Button>

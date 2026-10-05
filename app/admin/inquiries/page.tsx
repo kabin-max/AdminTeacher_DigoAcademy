@@ -34,6 +34,7 @@ export default async function AdminInquiriesPage() {
     batches: i.course.batches,
     learningPlans: i.course.learningPlans,
     enrolled: !!i.enrollment,
+    receiptUrl: i.receiptDisplayUrl,
   }));
 
   return (

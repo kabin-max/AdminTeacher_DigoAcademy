@@ -82,3 +82,11 @@ export async function getCourseForAdmin(courseId: string) {
     },
   });
 }
+
+export async function getAllInstructorsForDropdown() {
+  return db.user.findMany({
+    where: { OR: [{ role: 'INSTRUCTOR' }, { role: 'ADMIN' }] },
+    select: { id: true, name: true, email: true },
+    orderBy: { name: 'asc' },
+  });
+}

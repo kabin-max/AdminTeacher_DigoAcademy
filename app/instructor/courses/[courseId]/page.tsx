@@ -60,6 +60,8 @@ export default async function CourseBuilderPage({
                 difficulty: course.difficulty,
                 language: course.language,
                 price: course.priceCents / 100,
+                originalPrice: course.originalPriceCents ? course.originalPriceCents / 100 : null,
+                isPromo: course.isPromo,
                 thumbnailKey: course.thumbnailKey ?? '',
               }}
             />

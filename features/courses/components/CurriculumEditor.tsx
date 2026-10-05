@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 import { LessonContentEditor } from '@/features/courses/components/LessonContentEditor';
 import { LESSON_TYPES } from '@/features/courses/schemas';
-import { addLesson, addSection, deleteLesson, deleteSection } from '@/features/courses/server/actions';
+import { addLesson, addSection, deleteLesson, deleteSection, bulkImportCurriculum } from '@/features/courses/server/actions';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
@@ -117,6 +117,7 @@ export function CurriculumEditor({
 }) {
   const router = useRouter();
   const [newSection, setNewSection] = useState('');
+  const [bulkText, setBulkText] = useState('');
   const [busy, setBusy] = useState(false);
   const [expandedLessonId, setExpandedLessonId] = useState<string | null>(null);
 
@@ -130,6 +131,20 @@ export function CurriculumEditor({
       return;
     }
     setNewSection('');
+    router.refresh();
+  }
+
+  async function handleBulkImport() {
+    if (!bulkText.trim()) return;
+    setBusy(true);
+    const result = await bulkImportCurriculum(courseId, bulkText);
+    setBusy(false);
+    if (!result.ok) {
+      toast.error(result.error ?? 'Could not import curriculum');
+      return;
+    }
+    toast.success('Curriculum imported successfully!');
+    setBulkText('');
     router.refresh();
   }
 
@@ -228,6 +243,23 @@ export function CurriculumEditor({
         />
         <Button type="button" onClick={createSection} disabled={busy || !newSection.trim()}>
           Add section
+        </Button>
+      </div>
+
+      <div className="flex flex-col gap-4 mt-8 pt-8 border-t border-border">
+        <h3 className="font-semibold text-lg">Bulk Import Syllabus</h3>
+        <p className="text-sm text-muted-foreground">
+          Paste a syllabus outline here to quickly generate the curriculum. 
+          Use normal lines for <strong>Sections</strong>, and lines starting with a hyphen (<code>-</code>) for <strong>Lessons</strong>.
+        </p>
+        <textarea
+          value={bulkText}
+          onChange={(e) => setBulkText(e.target.value)}
+          placeholder="Introduction\n- Welcome Video\n- Setup Guide\n\nAdvanced Concepts\n- Deep Dive"
+          className="min-h-[150px] w-full max-w-2xl rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        />
+        <Button type="button" onClick={handleBulkImport} disabled={busy || !bulkText.trim()} className="w-fit">
+          Import Syllabus
         </Button>
       </div>
     </div>

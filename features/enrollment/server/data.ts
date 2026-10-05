@@ -1,14 +1,10 @@
 import 'server-only';
 
 import { db } from '@/lib/db';
+import { isS3Configured, presignDownload } from '@/lib/storage';
 
-/**
- * All inquiries for the admin pipeline, newest first. Optionally scoped to a course.
- * Each inquiry carries its course's cohorts so the pipeline can convert inline
- * (batches for GROUP_LIVE, learning plans for SELF_PACED).
- */
 export async function getInquiries(courseId?: string) {
-  return db.inquiry.findMany({
+  const inquiries = await db.inquiry.findMany({
     where: courseId ? { courseId } : undefined,
     orderBy: { createdAt: 'desc' },
     include: {
@@ -24,6 +20,27 @@ export async function getInquiries(courseId?: string) {
       enrollment: { select: { id: true } },
     },
   });
+
+  return Promise.all(
+    inquiries.map(async (i) => {
+      let receiptDisplayUrl: string | null = null;
+      if (i.receiptUrl) {
+        if (i.receiptUrl.startsWith('http://') || i.receiptUrl.startsWith('https://')) {
+          receiptDisplayUrl = i.receiptUrl;
+        } else if (isS3Configured) {
+          try {
+            receiptDisplayUrl = await presignDownload(i.receiptUrl);
+          } catch {
+            receiptDisplayUrl = null;
+          }
+        }
+      }
+      return {
+        ...i,
+        receiptDisplayUrl,
+      };
+    })
+  );
 }
 
 export type AdminInquiry = Awaited<ReturnType<typeof getInquiries>>[number];

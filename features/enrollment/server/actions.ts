@@ -125,7 +125,7 @@ export async function createGuestInquiry(input: CreateGuestInquiryInput): Promis
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message ?? 'Invalid input.' };
   }
-  const { courseId, mode, name, email, phone, message } = parsed.data;
+  const { courseId, mode, name, email, phone, message, receiptUrl } = parsed.data;
 
   const course = await db.course.findFirst({
     where: { id: courseId, status: 'PUBLISHED' },
@@ -163,6 +163,7 @@ export async function createGuestInquiry(input: CreateGuestInquiryInput): Promis
       guestEmail: email,
       guestPhone: phone || null,
       message: message || null,
+      receiptUrl: receiptUrl || null,
     },
     select: { id: true },
   });

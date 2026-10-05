@@ -108,6 +108,19 @@ enum NotificationType {
 }
 
 // ============================================================================
+// Global Settings
+// ============================================================================
+model GlobalSettings {
+  id              String   @id @default("singleton")
+  paymentQrUrl    String?
+  bankName        String?  // e.g. "Nepal Bank Limited"
+  bankAccountName String?  // e.g. "Digo Academy"
+  bankAccountNo   String?  // e.g. "01600107100424000001"
+  bankBranch      String?  // e.g. "Dharan"
+  updatedAt       DateTime @updatedAt
+}
+
+// ============================================================================
 // Auth (Better Auth) — reconciled with `better-auth generate` in Phase 2.
 // Custom app fields (role, status) live on User.
 // ============================================================================
@@ -285,14 +298,17 @@ model Course {
   subtitle        String?
   description     String?
   thumbnailKey    String? // S3 key
+  introVideoKey   String? // S3 key for course intro video
   language        String       @default("en")
   difficulty      Difficulty   @default(BEGINNER)
-  priceCents      Int          @default(0)
-  currency        String       @default("USD")
-  status          CourseStatus @default(DRAFT)
-  version         Int          @default(1)
-  reReviewFlagged Boolean      @default(false) // set when published course has substantive edits (Phase 4)
-  ratingAvg       Float        @default(0) // cached aggregate of reviews
+  priceCents          Int          @default(0)
+  currency            String       @default("USD")
+  originalPriceCents  Int?         // shown crossed-out when isPromo is true
+  isPromo             Boolean      @default(false) // highlights course as a special offer
+  status              CourseStatus @default(DRAFT)
+  version             Int          @default(1)
+  reReviewFlagged     Boolean      @default(false) // set when published course has substantive edits (Phase 4)
+  ratingAvg           Float        @default(0) // cached aggregate of reviews
 
   categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
@@ -496,6 +512,7 @@ model Inquiry {
   mode        EnrollmentMode
   status      InquiryStatus  @default(NEW)
   message     String?
+  receiptUrl  String?
   contactedAt DateTime?
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt

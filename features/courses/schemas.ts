@@ -15,7 +15,11 @@ export const courseDetailsSchema = z.object({
   language: z.string().min(2).max(20),
   /** Major currency units in the form; converted to integer cents server-side. */
   price: z.number().min(0, 'Price cannot be negative').max(100_000),
+  originalPrice: z.number().min(0).max(100_000).optional().nullable(),
+  isPromo: z.boolean().optional(),
   thumbnailKey: optionalText(500),
+  introVideoKey: optionalText(500),
+  instructorId: z.string().optional(),
 });
 export type CourseDetailsInput = z.infer<typeof courseDetailsSchema>;
 

@@ -39,6 +39,7 @@ export interface InquiryRow {
   batches: CohortOption[];
   learningPlans: CohortOption[];
   enrolled: boolean;
+  receiptUrl?: string | null;
 }
 
 const STATUS_TONE: Record<InquiryStatus, StatusTone> = {
@@ -120,6 +121,18 @@ export function InquiriesTable({ inquiries }: { inquiries: InquiryRow[] }) {
                   <div className="text-xs text-muted-foreground">{row.contact.email}</div>
                   {row.contact.phone && (
                     <div className="text-xs text-muted-foreground">{row.contact.phone}</div>
+                  )}
+                  {row.receiptUrl && (
+                    <div className="mt-1.5">
+                      <a
+                        href={row.receiptUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-400"
+                      >
+                        <span>📄 View Receipt</span>
+                      </a>
+                    </div>
                   )}
                 </td>
                 <td className="px-4 py-3">

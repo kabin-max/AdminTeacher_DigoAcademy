@@ -7,7 +7,7 @@ import { CurriculumEditor } from '@/features/courses/components/CurriculumEditor
 import { DeleteCourseButton } from '@/features/courses/components/DeleteCourseButton';
 import type { CourseStatus } from '@/features/courses/lifecycle';
 import { getCategoryChoices } from '@/features/categories/server/data';
-import { getCourseForAdmin } from '@/features/courses/server/data';
+import { getCourseForAdmin, getAllInstructorsForDropdown } from '@/features/courses/server/data';
 import { requireRole } from '@/lib/auth/session';
 import { PageHeader } from '@/shared/components/dashboard/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
@@ -21,9 +21,10 @@ export default async function AdminCourseBuilderPage({
   await requireRole(ROLES.ADMIN);
   const { courseId } = await params;
 
-  const [course, categories] = await Promise.all([
+  const [course, categories, instructors] = await Promise.all([
     getCourseForAdmin(courseId),
     getCategoryChoices(),
+    getAllInstructorsForDropdown(),
   ]);
   if (!course) notFound();
 
@@ -66,6 +67,7 @@ export default async function AdminCourseBuilderPage({
               mode="edit"
               courseId={course.id}
               builderBasePath="/admin/courses"
+              instructors={instructors}
               defaultValues={{
                 title: course.title,
                 subtitle: course.subtitle ?? '',
@@ -74,7 +76,11 @@ export default async function AdminCourseBuilderPage({
                 difficulty: course.difficulty,
                 language: course.language,
                 price: course.priceCents / 100,
+                originalPrice: course.originalPriceCents ? course.originalPriceCents / 100 : null,
+                isPromo: course.isPromo,
                 thumbnailKey: course.thumbnailKey ?? '',
+                introVideoKey: course.introVideoKey ?? '',
+                instructorId: course.instructorId,
               }}
             />
           </CardContent>

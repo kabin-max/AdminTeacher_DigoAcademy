@@ -42,6 +42,7 @@ export const createGuestInquirySchema = z.object({
     .trim()
     .min(5, 'Phone number is required'),
   message: z.string().trim().max(1000, 'Keep it under 1000 characters.').optional(),
+  receiptUrl: z.string().optional(),
 });
 export type CreateGuestInquiryInput = z.infer<typeof createGuestInquirySchema>;
 

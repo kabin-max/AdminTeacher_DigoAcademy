@@ -81,8 +81,11 @@ export async function createCourse(input: CourseDetailsInput): Promise<CreateRes
       difficulty: d.difficulty,
       language: d.language,
       priceCents: toCents(d.price),
+      originalPriceCents: d.originalPrice != null ? toCents(d.originalPrice) : null,
+      isPromo: d.isPromo ?? false,
       thumbnailKey: emptyToNull(d.thumbnailKey),
-      instructorId: session.user.id,
+      introVideoKey: emptyToNull(d.introVideoKey),
+      instructorId: (isAdminSession(session) && d.instructorId) ? d.instructorId : session.user.id,
     },
   });
 
@@ -120,7 +123,11 @@ export async function updateCourseDetails(
       difficulty: d.difficulty,
       language: d.language,
       priceCents,
+      originalPriceCents: d.originalPrice != null ? toCents(d.originalPrice) : null,
+      isPromo: d.isPromo ?? false,
       thumbnailKey: emptyToNull(d.thumbnailKey),
+      introVideoKey: emptyToNull(d.introVideoKey),
+      ...(isAdminSession(session) && d.instructorId ? { instructorId: d.instructorId } : {}),
       ...(existing.status === 'PUBLISHED' && substantiveChange ? { reReviewFlagged: true } : {}),
     },
   });
@@ -133,6 +140,58 @@ export async function updateCourseDetails(
 // ---------------------------------------------------------------------------
 // Curriculum (sections + lessons) — editing curriculum is a substantive change.
 // ---------------------------------------------------------------------------
+
+export async function bulkImportCurriculum(courseId: string, text: string): Promise<ActionResult> {
+  const session = await authorize(ROLES.INSTRUCTOR, ROLES.ADMIN);
+  if (!session) return { ok: false, error: 'Not authorized.' };
+  const course = await manageableCourse(courseId, session);
+  if (!course) return { ok: false, error: 'Course not found.' };
+
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  if (lines.length === 0) return { ok: false, error: 'Input is empty.' };
+
+  try {
+    await db.$transaction(
+      async (tx) => {
+        let currentSection: any = null;
+        let sectionOrder = await tx.section.count({ where: { courseId } });
+        let lessonOrder = 0;
+        const allLessonsToCreate: any[] = [];
+
+        for (const line of lines) {
+          if (line.startsWith('-') || line.startsWith('*')) {
+            if (!currentSection) throw new Error('Lesson must be under a section. Add a section title first.');
+            const lessonTitle = line.replace(/^[-*]/, '').trim();
+            allLessonsToCreate.push({
+              sectionId: currentSection.id,
+              title: lessonTitle,
+              type: 'NOTE',
+              order: lessonOrder++,
+            });
+          } else {
+            const sectionTitle = line.replace(/^\d+\.\s*/, '').trim();
+            currentSection = await tx.section.create({
+              data: { courseId, title: sectionTitle, order: sectionOrder++ }
+            });
+            lessonOrder = 0;
+          }
+        }
+
+        if (allLessonsToCreate.length > 0) {
+          await tx.lesson.createMany({ data: allLessonsToCreate });
+        }
+      },
+      { timeout: 30000 } // 30 second timeout for large imports
+    );
+  } catch (e: any) {
+    return { ok: false, error: e.message || 'Failed to import curriculum.' };
+  }
+
+  await flagReReviewIfPublished(courseId, course.status as CourseStatus);
+  revalidatePath(`/instructor/courses/${courseId}`);
+  revalidatePath(`/admin/courses/${courseId}`);
+  return { ok: true };
+}
 
 export async function addSection(courseId: string, input: SectionInput): Promise<ActionResult> {
   const session = await authorize(ROLES.INSTRUCTOR, ROLES.ADMIN);
