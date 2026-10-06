@@ -40,6 +40,7 @@ const selectClass =
 
 interface FormValues {
   name: string;
+  startText: string;
   courseId: string;
   instructorId: string;
   startDate: string;
@@ -49,6 +50,7 @@ interface FormValues {
 
 const emptyForm: FormValues = {
   name: '',
+  startText: '',
   courseId: '',
   instructorId: '',
   startDate: '',
@@ -87,6 +89,16 @@ function BatchForm({
           aria-invalid={!!errors.name}
         />
         <FieldError>{errors.name}</FieldError>
+      </Field>
+      <Field data-invalid={!!errors.startText}>
+        <FieldLabel>Batch Start Text (Public Display)</FieldLabel>
+        <Input
+          value={values.startText}
+          onChange={(e) => set({ startText: e.target.value })}
+          placeholder="e.g. Starts Tomorrow, Starts in 3 days"
+          aria-invalid={!!errors.startText}
+        />
+        <FieldError>{errors.startText}</FieldError>
       </Field>
       <Field data-invalid={!!errors.courseId}>
         <FieldLabel>Course</FieldLabel>

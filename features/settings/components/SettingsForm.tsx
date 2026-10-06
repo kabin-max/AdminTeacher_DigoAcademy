@@ -36,7 +36,7 @@ export function SettingsForm({ values }: { values: Record<string, SettingValue> 
 
   return (
     <div className="divide-y rounded-lg border">
-      {SETTINGS.map((def) => {
+      {SETTINGS.filter(def => def.key !== 'home.popup.imageKey').map((def) => {
         const current = values[def.key];
         return (
           <div

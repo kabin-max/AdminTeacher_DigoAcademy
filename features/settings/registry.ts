@@ -64,6 +64,27 @@ export const SETTINGS: readonly SettingDefinition[] = [
       { value: 'SELF_PACED', label: 'Self-paced' },
     ],
   },
+  {
+    key: 'home.popup.enabled',
+    type: 'boolean',
+    label: 'Enable home popup',
+    description: 'Show a promotional popup modal on the home page.',
+    default: false,
+  },
+  {
+    key: 'home.popup.imageKey',
+    type: 'text',
+    label: 'Popup Image Key',
+    description: 'S3 Key for the popup image banner.',
+    default: '',
+  },
+  {
+    key: 'home.popup.linkUrl',
+    type: 'text',
+    label: 'Popup Link URL',
+    description: 'Where the popup banner redirects to.',
+    default: '/courses',
+  },
 ] as const;
 
 export const SETTINGS_BY_KEY: Record<string, SettingDefinition> = Object.fromEntries(

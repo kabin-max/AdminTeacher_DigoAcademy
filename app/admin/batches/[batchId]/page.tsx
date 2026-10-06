@@ -42,6 +42,7 @@ export default async function AdminBatchDetailPage({
           batchId={batch.id}
           initial={{
             name: batch.name,
+            startText: batch.startText,
             courseId: batch.courseId,
             instructorId: batch.instructorId,
             startDate: batch.startDate?.toISOString() ?? null,

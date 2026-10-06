@@ -78,7 +78,7 @@ export async function createBatch(input: CreateBatchInput): Promise<ActionResult
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message ?? 'Invalid input.' };
   }
-  const { name, courseId, instructorId, startDate, endDate, capacity } = parsed.data;
+  const { name, startText, courseId, instructorId, startDate, endDate, capacity } = parsed.data;
 
   if (!(await assertCourse(courseId))) return { ok: false, error: 'Course not found.' };
   let instructorEmail: string | undefined;
@@ -93,6 +93,7 @@ export async function createBatch(input: CreateBatchInput): Promise<ActionResult
   const batch = await db.batch.create({
     data: {
       name,
+      startText,
       courseId,
       instructorId,
       startDate,
@@ -166,7 +167,7 @@ export async function updateBatch(input: UpdateBatchInput): Promise<ActionResult
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message ?? 'Invalid input.' };
   }
-  const { id, name, courseId, instructorId, startDate, endDate, capacity } = parsed.data;
+  const { id, name, startText, courseId, instructorId, startDate, endDate, capacity } = parsed.data;
 
   const existing = await db.batch.findUnique({
     where: { id },
@@ -186,7 +187,7 @@ export async function updateBatch(input: UpdateBatchInput): Promise<ActionResult
 
   await db.batch.update({
     where: { id },
-    data: { name, courseId, instructorId, startDate, endDate, capacity, meetLink, googleEventId },
+    data: { name, startText, courseId, instructorId, startDate, endDate, capacity, meetLink, googleEventId },
   });
 
   void syncBatchMeetAttendees(id);

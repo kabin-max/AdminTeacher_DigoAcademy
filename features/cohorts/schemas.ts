@@ -25,6 +25,7 @@ const batchName = z
 
 export const createBatchSchema = z.object({
   name: batchName,
+  startText: z.string().trim().max(100).optional(),
   courseId: z.string().min(1, 'Choose a course.'),
   instructorId: optionalId,
   startDate: optionalDate,

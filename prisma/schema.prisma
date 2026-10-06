@@ -582,6 +582,7 @@ model Payment {
 model Batch {
   id           String    @id @default(cuid())
   name         String
+  startText    String? // e.g. "Starts Tomorrow", "Starts in 3 days"
   courseId     String
   course       Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
   instructorId String?

@@ -3,6 +3,7 @@ import { Settings } from 'lucide-react';
 import { GoogleMeetSettings } from '@/features/google-meet/components/GoogleMeetSettings';
 import { SettingsForm } from '@/features/settings/components/SettingsForm';
 import { PaymentSettings } from '@/features/settings/components/PaymentSettings';
+import { PopupBannerSettings } from '@/features/settings/components/PopupBannerSettings';
 import { getSettings } from '@/features/settings/server/data';
 import { requireRole } from '@/lib/auth/session';
 import { db } from '@/lib/db';
@@ -22,11 +23,16 @@ export default async function AdminSettingsPage() {
 
   // Resolve the stored S3 key to a short-lived signed URL for the preview image.
   let qrPreviewUrl: string | null = globalSettings?.paymentQrUrl ?? null;
-  if (qrPreviewUrl && isS3Configured) {
+  let popupImagePreviewUrl: string | null = null;
+  const popupImageKey = typeof values['home.popup.imageKey'] === 'string' ? values['home.popup.imageKey'] : null;
+
+  if (isS3Configured) {
     try {
-      qrPreviewUrl = await presignDownload(qrPreviewUrl);
+      if (qrPreviewUrl) qrPreviewUrl = await presignDownload(qrPreviewUrl);
+      if (popupImageKey) popupImagePreviewUrl = await presignDownload(popupImageKey);
     } catch {
       qrPreviewUrl = null;
+      popupImagePreviewUrl = null;
     }
   }
 
@@ -47,6 +53,7 @@ export default async function AdminSettingsPage() {
         }
       />
       <SettingsForm values={values} />
+      <PopupBannerSettings initialImageUrl={popupImagePreviewUrl} />
       <PaymentSettings
         paymentQrUrl={qrPreviewUrl}
         bankName={globalSettings?.bankName ?? null}

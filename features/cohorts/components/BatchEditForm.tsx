@@ -23,6 +23,7 @@ const selectClass =
 
 interface FormValues {
   name: string;
+  startText: string;
   courseId: string;
   instructorId: string;
   startDate: string;
@@ -51,6 +52,7 @@ export function BatchEditForm({
   batchId: string;
   initial: {
     name: string;
+    startText: string | null;
     courseId: string;
     instructorId: string | null;
     startDate: string | null;
@@ -65,6 +67,7 @@ export function BatchEditForm({
   const [isSaving, startSave] = useTransition();
   const [values, setValues] = useState<FormValues>({
     name: initial.name,
+    startText: initial.startText ?? '',
     courseId: initial.courseId,
     instructorId: initial.instructorId ?? '',
     startDate: toDateTimeLocal(initial.startDate),
@@ -98,6 +101,11 @@ export function BatchEditForm({
         <FieldLabel>Name</FieldLabel>
         <Input value={values.name} onChange={(e) => set({ name: e.target.value })} aria-invalid={!!errors.name} />
         <FieldError>{errors.name}</FieldError>
+      </Field>
+      <Field data-invalid={!!errors.startText}>
+        <FieldLabel>Batch Start Text (Public Display)</FieldLabel>
+        <Input value={values.startText} onChange={(e) => set({ startText: e.target.value })} placeholder="e.g. Starts Tomorrow, Starts in 3 days" aria-invalid={!!errors.startText} />
+        <FieldError>{errors.startText}</FieldError>
       </Field>
       <Field data-invalid={!!errors.endDate}>
         <FieldLabel>Class end date</FieldLabel>
