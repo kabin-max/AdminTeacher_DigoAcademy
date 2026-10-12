@@ -83,7 +83,7 @@ export const SETTINGS: readonly SettingDefinition[] = [
     type: 'text',
     label: 'Popup Link URL',
     description: 'Where the popup banner redirects to.',
-    default: '/courses',
+    default: '/courses/aws-cloud-practitioner',
   },
 ] as const;
 

@@ -35,7 +35,7 @@ const LINK_COLUMNS = [
 
 const SOCIALS = [
   { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61554822595076', icon: Facebook },
-  { label: 'LinkedIn', href: '#', icon: Linkedin },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/digo-academy', icon: Linkedin },
 ];
 
 export function PublicFooter() {
@@ -60,6 +60,8 @@ export function PublicFooter() {
               <a
                 key={social.label}
                 href={social.href}
+                target="_blank"
+                rel="noreferrer"
                 aria-label={social.label}
                 className="flex size-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition-colors hover:bg-primary/10 hover:text-primary dark:bg-slate-800 dark:text-slate-300"
               >

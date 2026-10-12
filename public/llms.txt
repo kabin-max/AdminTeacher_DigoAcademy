@@ -1,0 +1,26 @@
+# Digo Academy
+
+> Digo Academy is a premier cloud computing, DevOps automation, and AWS certification training platform offering expert-led live cohorts, self-paced courses, and practical hands-on labs.
+
+Digo Academy bridges the gap between theoretical cloud concepts and real-world implementation. Our programs empower students and working professionals to prepare for industry-recognized certifications, advance their engineering careers, and master modern cloud architecture.
+
+## Core Courses & AWS Certifications
+
+- [AWS Certified Cloud Practitioner](https://digo.academy/courses): Comprehensive foundational training in cloud concepts, security, core AWS services, billing, and pricing models.
+- [AWS Certified Solutions Architect Associate](https://digo.academy/courses): Practical architectural design principles covering resiliency, high availability, security, and cost optimization.
+- [AWS Certified Developer Associate](https://digo.academy/courses): Cloud-native application development, serverless deployment, SDK integration, and CI/CD pipelines.
+- [AWS Certified DevOps Engineer Professional](https://digo.academy/courses): Advanced automation, infrastructure as code (IaC), continuous integration, delivery systems, and monitoring.
+- [AWS Certified Security Specialty](https://digo.academy/courses): Cloud governance, identity and access management (IAM), data protection, network security, and incident response.
+- [AWS Certified AI Practitioner](https://digo.academy/courses): Fundamentals of Artificial Intelligence, Machine Learning models, and generative AI services on AWS.
+
+## Learning Approaches
+
+- [Live Interactive Cohorts](https://digo.academy/batches): Structured live training batches with expert instructors, weekly milestones, collaborative peer learning, and live Q&A.
+- [Self-Paced Learning](https://digo.academy/courses): On-demand high-definition video lessons, comprehensive study resources, and practical hands-on labs with lifetime access.
+
+## Platform Navigation & Resources
+
+- [Browse All Courses](https://digo.academy/courses): Explore our complete catalog of cloud, DevOps, and infrastructure engineering courses.
+- [Upcoming Cohort Batches](https://digo.academy/batches): Check schedule and enroll in upcoming live interactive training cohorts.
+- [About Digo Academy](https://digo.academy/about): Learn about our mission, industry instructors, and student transformation stories.
+- [Student Inquiries & Support](https://digo.academy/contact): Reach out to our admissions team for course guidance, custom training, or enterprise inquiries.
