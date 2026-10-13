@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import type { ReactNode } from 'react';
 
 import type { NavGroup } from '@/shared/components/dashboard/DashboardShell';
 import { cn } from '@/shared/utils/cn';
@@ -61,10 +62,12 @@ const REVEAL = 'transition-opacity duration-150 lg:opacity-0 lg:group-hover/asid
 export function SidebarNav({
   groups,
   onNavigate,
+  children,
 }: {
   groups: NavGroup[];
   /** Called when a link is activated (used to close the mobile drawer). */
   onNavigate?: () => void;
+  children?: ReactNode;
 }) {
   const pathname = usePathname();
 
@@ -73,7 +76,7 @@ export function SidebarNav({
   const activeHref = matches.sort((a, b) => b.length - a.length)[0];
 
   return (
-    <nav className="flex-1 space-y-5 overflow-y-auto overflow-x-hidden px-3 py-4">
+    <nav className="flex-1 space-y-5 overflow-y-auto overflow-x-hidden px-3 py-4 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.25)_transparent]">
       {groups.map((group, index) => (
         <div key={group.label ?? index} className="space-y-1">
           {group.label && (
@@ -129,6 +132,7 @@ export function SidebarNav({
           })}
         </div>
       ))}
+      {children}
     </nav>
   );
 }

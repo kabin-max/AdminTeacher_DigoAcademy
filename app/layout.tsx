@@ -14,6 +14,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Digo Academy',
   description: 'Digo Academy — Learning Management System',
+  icons: {
+    icon: '/brand-logo.png',
+    shortcut: '/brand-logo.png',
+    apple: '/brand-logo.png',
+  },
 };
 
 export default function RootLayout({

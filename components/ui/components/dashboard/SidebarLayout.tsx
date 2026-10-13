@@ -55,40 +55,46 @@ export function SidebarLayout({
       <aside
         className={cn(
           'group/aside fixed inset-y-0 left-0 z-50 flex w-64 flex-col overflow-hidden bg-sidebar text-sidebar-foreground shadow-xl transition-[width,transform] duration-200',
-          // Desktop: a collapsed icon rail that grows on hover. `lg:static` takes
-          // it out of the fixed-overlay flow so the flex layout below reflows
-          // the content column to make room — nothing sits under the rail.
-          'lg:static lg:w-20 lg:translate-x-0 lg:shadow-none lg:hover:w-64',
+          'lg:sticky lg:top-0 lg:h-svh lg:w-20 lg:translate-x-0 lg:shadow-none lg:hover:w-64',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <Link href={`/${area.toLowerCase()}`} className="relative flex h-16 items-center px-4">
-          {/* Collapsed mark (desktop rail only). */}
-          <span className="absolute left-4 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-xl bg-white/15 font-heading text-base font-bold text-sidebar-foreground opacity-0 transition-opacity duration-150 lg:opacity-100 lg:group-hover/aside:opacity-0">
-            D
-          </span>
-          {/* Full wordmark (mobile always; desktop on hover). */}
-          <BrandLogo className="absolute left-4 top-1/2 h-7 w-auto -translate-y-1/2 brightness-0 invert transition-opacity duration-150 lg:opacity-0 lg:group-hover/aside:opacity-100" />
-        </Link>
-
-        <SidebarNav groups={navGroups} onNavigate={closeDrawer} />
-
-        <div className="mt-auto space-y-1 border-t border-sidebar-border p-3">
+        <div className="border-b border-sidebar-border p-3">
           <Link
-            href="/settings/security"
-            onClick={closeDrawer}
-            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            href={`/${area.toLowerCase()}`}
+            aria-label={`${area} dashboard`}
+            className="group/logo relative flex h-[53px] items-center overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-200 hover:bg-white/95 hover:shadow"
           >
-            <Shield className="size-4.5 shrink-0" />
-            <span className={cn('flex-1 truncate', REVEAL)}>Security</span>
+            {/* Collapsed rail logo mark (desktop collapsed rail only) */}
+            <div className="absolute inset-y-0 left-0 flex w-14 items-center justify-center p-1 opacity-0 transition-opacity duration-150 lg:opacity-100 lg:group-hover/aside:opacity-0">
+              <BrandLogo className="h-[31px] w-auto max-h-full max-w-full object-contain" />
+            </div>
+
+            {/* Expanded full logo pill (mobile always; desktop on hover) */}
+            <div className="flex h-full w-full items-center justify-center px-3 py-1 transition-opacity duration-150 lg:opacity-0 lg:group-hover/aside:opacity-100">
+              <BrandLogo className="h-[35px] w-auto max-h-full max-w-full object-contain" />
+            </div>
           </Link>
-          <SignOutButton
-            variant="ghost"
-            withIcon
-            className="h-auto w-full justify-start gap-3 rounded-xl border-transparent bg-transparent px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground [&>svg]:size-4.5"
-            labelClassName={cn('flex-1 text-left', REVEAL)}
-          />
         </div>
+
+        <SidebarNav groups={navGroups} onNavigate={closeDrawer}>
+          <div className="space-y-1 border-t border-sidebar-border/60 pt-3">
+            <Link
+              href="/settings/security"
+              onClick={closeDrawer}
+              className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            >
+              <Shield className="size-4.5 shrink-0" />
+              <span className={cn('flex-1 truncate', REVEAL)}>Security</span>
+            </Link>
+            <SignOutButton
+              variant="ghost"
+              withIcon
+              className="h-auto w-full justify-start gap-3 rounded-xl border-transparent bg-transparent px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground [&>svg]:size-4.5"
+              labelClassName={cn('flex-1 text-left', REVEAL)}
+            />
+          </div>
+        </SidebarNav>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">

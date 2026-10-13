@@ -99,6 +99,7 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // refresh once per day
+    freshAge: 0, // disable session freshness check so active sessions don't throw SESSION_NOT_FRESH
   },
 
   // Per-account lockout after repeated failed password logins.
